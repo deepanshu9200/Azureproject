@@ -1,0 +1,12 @@
+{
+	"name": "car_sales_powerBI",
+	"type": "Microsoft.Synapse/workspaces/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "PowerBIWorkspace",
+		"typeProperties": {
+			"workspaceID": "a0e2a0dd-7f15-40d4-a724-2f0ababb7160",
+			"tenantID": "76a2ae5a-9f00-4f6b-95ed-5d33d77c4d61"
+		}
+	}
+}

@@ -1,0 +1,96 @@
+{
+	"name": "set variable",
+	"properties": {
+		"activities": [
+			{
+				"name": "breadth",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "length",
+					"value": {
+						"value": "@pipeline().parameters.givelength",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "area",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "length",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "breadth",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "area",
+					"value": {
+						"value": "@mul(variables('breeadth'),variables('length'))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "length",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "breeadth",
+					"value": {
+						"value": "@pipeline().parameters.givebreadth",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"givelength": {
+				"type": "int"
+			},
+			"givebreadth": {
+				"type": "int"
+			}
+		},
+		"variables": {
+			"length": {
+				"type": "Integer"
+			},
+			"breeadth": {
+				"type": "Integer"
+			},
+			"area": {
+				"type": "Integer"
+			}
+		},
+		"folder": {
+			"name": "Activity learning"
+		},
+		"annotations": [],
+		"lastPublishTime": "2024-04-07T07:46:15Z"
+	},
+	"type": "Microsoft.Synapse/workspaces/pipelines"
+}

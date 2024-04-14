@@ -1,0 +1,41 @@
+{
+	"name": "Pipeline 2",
+	"properties": {
+		"activities": [
+			{
+				"name": "Web1_copy1",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "POST",
+					"url": {
+						"value": "https://prod-40.eastus.logic.azure.com:443/workflows/0dc33d0de20943d79ce8ada2f894ef12/triggers/When_a_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_a_HTTP_request_is_received%2Frun&sv=1.0&sig=SWsEeGeQqwFt5fcBv3cJ5HVdD06BZ0_PenxLv7Ctutg",
+						"type": "Expression"
+					},
+					"connectVia": {
+						"referenceName": "AutoResolveIntegrationRuntime",
+						"type": "IntegrationRuntimeReference"
+					},
+					"body": {
+						"value": "{\"to\":\"deepanshu.sethi9@gmail.com\",\n\"Subject\":\"Test Mail\",\n\"email_body\":\"test mail\",\n\"pipeline\":\"pipeline: @{pipeline().Pipeline}\",\n\"Id\":\"ID: @{pipeline().RunId}\",\n\"test\"=\"true\"\n}",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"folder": {
+			"name": "SFTPtocloud"
+		},
+		"annotations": [],
+		"lastPublishTime": "2024-04-12T17:41:10Z"
+	},
+	"type": "Microsoft.Synapse/workspaces/pipelines"
+}

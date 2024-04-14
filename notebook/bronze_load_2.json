@@ -1,0 +1,339 @@
+{
+	"name": "bronze_load_2",
+	"properties": {
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"bigDataPool": {
+			"referenceName": "sparkpool",
+			"type": "BigDataPoolReference"
+		},
+		"sessionProperties": {
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 2,
+			"runAsWorkspaceSystemIdentity": false,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "false",
+				"spark.dynamicAllocation.minExecutors": "2",
+				"spark.dynamicAllocation.maxExecutors": "2",
+				"spark.autotune.trackingId": "fb28671d-c955-4094-9ca2-d7574ad205f3"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"synapse_widget": {
+				"version": "0.1"
+			},
+			"enableDebugMode": false,
+			"language_info": {
+				"name": "python"
+			},
+			"a365ComputeOptions": {
+				"id": "/subscriptions/41e7dbb8-edc9-43da-b117-e8bffb8e870b/resourceGroups/Footballworldcup/providers/Microsoft.Synapse/workspaces/footballworldcupworkspace/bigDataPools/sparkpool",
+				"name": "sparkpool",
+				"type": "Spark",
+				"endpoint": "https://footballworldcupworkspace.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/sparkpool",
+				"auth": {
+					"type": "AAD",
+					"authResource": "https://dev.azuresynapse.net",
+					"authHeader": null
+				},
+				"sparkVersion": "3.3",
+				"nodeCount": 10,
+				"cores": 4,
+				"memory": 28,
+				"extraHeader": null
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"from pyspark import SparkContext\r\n",
+					"from pyspark.sql import SparkSession\r\n",
+					"from os.path import join as joinPath\r\n",
+					"from notebookutils import mssparkutils\r\n",
+					"\r\n",
+					"spark = SparkSession.builder.appName(\"Bronze load\").getOrCreate()\r\n",
+					""
+				],
+				"execution_count": 1
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"%run parameterNotebook"
+				],
+				"execution_count": 22
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"**Initializing Tables Names**"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"rawtablename=f\"raw_{folder}\" #raw_car_sales_data\r\n",
+					"rawtemptable=f\"temp_{folder}\" #temp_car_sales_data\r\n",
+					"raw_table_path=f\"{bronzestorage}/tables/{rawtablename}\""
+				],
+				"execution_count": 24
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"**Creating Database**"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"collapsed": false
+				},
+				"source": [
+					"#  %%sql\r\n",
+					"#  create database dbo\r\n",
+					""
+				],
+				"execution_count": 57
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"**Reading parquet file and delta file**"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"collapsed": false
+				},
+				"source": [
+					"df=spark.read.parquet(f\"{parquetfilestorage}/{folder}/parquet\",header=\"True\")\r\n",
+					"df1=spark.read.format(\"delta\").load(f\"{deltafilestorage}/{folder}/delta\",header=\"True\")"
+				],
+				"execution_count": 23
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"\r\n",
+					"**Method 1: Loading into database directly using dataframe**"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"#It stores in raw container of synapse\r\n",
+					"\r\n",
+					"#parquet dataframe\r\n",
+					"df.write.format(\"delta\").mode(\"overwrite\").option(\"mergeSchema\",\"true\").option(\"delta.columnMapping.mode\", \"name\").option(\"delta.minReaderVersion\",\"2\").option(\"delta.minWriterVersion\",\"5\").saveAsTable(\"dbo.parquet_car_sales_data\")\r\n",
+					"\r\n",
+					"#Delta dataframe\r\n",
+					"df1.write.format(\"delta\").mode(\"overwrite\").option(\"mergeSchema\",\"true\").option(\"delta.columnMapping.mode\", \"name\").option(\"delta.minReaderVersion\",\"2\").option(\"delta.minWriterVersion\",\"5\").saveAsTable(\"dbo.delta_car_sales_data\")"
+				],
+				"execution_count": 60
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"**Creating a temprary view table**"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"collapsed": false
+				},
+				"source": [
+					"df.createOrReplaceTempView(rawtemptable)\r\n",
+					"spark.sql(f\"select * from {rawtemptable}\").show() #temp_car_sales_data"
+				],
+				"execution_count": 31
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"**Method 2: Loading data from a temporary view**"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"tableDDL=f\"\"\"create table if not exists dbo.bronze_{folder}\r\n",
+					"using DELTA\r\n",
+					"LOCATION '{bronzestorage}/Tables'\r\n",
+					"TBLPROPERTIES( 'delta.columnMapping.mode' = 'name',\r\n",
+					"   'delta.minReaderVersion' = '2',\r\n",
+					"   'delta.minWriterVersion' = '5')\r\n",
+					"as \r\n",
+					"select * from {rawtemptable} \r\n",
+					"\"\"\"\r\n",
+					"\r\n",
+					""
+				],
+				"execution_count": 67
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"**Loading data**"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"spark.sql(tableDDL)"
+				],
+				"execution_count": 68
+			}
+		]
+	}
+}

@@ -1,0 +1,17 @@
+{
+	"name": "SQL script 1",
+	"properties": {
+		"content": {
+			"query": "CREATE TABLE [dbo].[learn]\n    \n   (\n        number int not NULL,\n        name VARCHAR(30)\n\n   )\n\ninsert into [dbo].[learn] VALUES (1,'deep')\n\nselect * from [dbo].[learn]\n\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "sqlds",
+				"poolName": "sqlds"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

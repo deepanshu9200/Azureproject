@@ -1,0 +1,62 @@
+{
+	"name": "test_sql_loading",
+	"properties": {
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"sessionProperties": {
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 2,
+			"runAsWorkspaceSystemIdentity": false,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "false",
+				"spark.dynamicAllocation.minExecutors": "2",
+				"spark.dynamicAllocation.maxExecutors": "2",
+				"spark.autotune.trackingId": "1dfc12fd-4131-4e28-98cb-801a0eeffa90"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"synapse_widget": {
+				"version": "0.1"
+			},
+			"enableDebugMode": false,
+			"language_info": {
+				"name": "python"
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "sparksql"
+					}
+				},
+				"source": [
+					"%%sql\r\n",
+					"--SELECT salesperson from delta_car_sales_data\r\n",
+					"--CREATE DATABASE learn\r\n",
+					"\r\n",
+					"-- create table learn.employee(\r\n",
+					"--     employeeid int,\r\n",
+					"--     employeename varchar(50),\r\n",
+					"--     department varchar(50),\r\n",
+					"--     salary decimal (10,2)\r\n",
+					"-- );\r\n",
+					"\r\n",
+					"-- INSERT INTO learn.employee (employeeid, employeename, department, salary)\r\n",
+					"-- VALUES\r\n",
+					"--     (1, 'John Doe', 'HR', 50000.00),\r\n",
+					"--     (2, 'Jane Smith', 'Finance', 60000.00),\r\n",
+					"--     (3, 'Alice Johnson', 'IT', 55000.00);\r\n",
+					"\r\n",
+					"--select * from learn.employee"
+				]
+			}
+		]
+	}
+}
