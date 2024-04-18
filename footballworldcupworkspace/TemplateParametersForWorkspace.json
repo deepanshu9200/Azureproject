@@ -1,0 +1,30 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"workspaceName": {
+			"value": "footballworldcupworkspace"
+		},
+		"footballworldcupworkspace-WorkspaceDefaultSqlServer_connectionString": {
+			"value": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=tcp:footballworldcupworkspace.sql.azuresynapse.net,1433;Initial Catalog=@{linkedService().DBName}"
+		},
+		"storageaccount_linklist_accountKey": {
+			"value": ""
+		},
+		"AzureKeyVault1_properties_typeProperties_baseUrl": {
+			"value": "https://footballwckeyvault.vault.azure.net/"
+		},
+		"footballworldcupworkspace-WorkspaceDefaultStorage_properties_typeProperties_url": {
+			"value": "https://footballwcstorage.dfs.core.windows.net"
+		},
+		"onprem_to_cloud_properties_typeProperties_host": {
+			"value": "footballwcstorage.blob.core.windows.net"
+		},
+		"onprem_to_cloud_properties_typeProperties_userName": {
+			"value": "footballwcstorage.sftpadmin"
+		},
+		"storageaccount_linklist_properties_typeProperties_url": {
+			"value": "https://footballwcstorage.dfs.core.windows.net/"
+		}
+	}
+}
