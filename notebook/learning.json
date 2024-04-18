@@ -1,0 +1,270 @@
+{
+	"name": "learning",
+	"properties": {
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"bigDataPool": {
+			"referenceName": "sparkpool",
+			"type": "BigDataPoolReference"
+		},
+		"sessionProperties": {
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 2,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "false",
+				"spark.dynamicAllocation.minExecutors": "2",
+				"spark.dynamicAllocation.maxExecutors": "2",
+				"spark.autotune.trackingId": "b9eff8af-4713-4f6c-9e25-3669491699c4"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"enableDebugMode": false,
+			"kernelspec": {
+				"name": "synapse_pyspark",
+				"display_name": "Synapse PySpark"
+			},
+			"language_info": {
+				"name": "python"
+			},
+			"a365ComputeOptions": {
+				"id": "/subscriptions/41e7dbb8-edc9-43da-b117-e8bffb8e870b/resourceGroups/Footballworldcup/providers/Microsoft.Synapse/workspaces/footballworldcupworkspace/bigDataPools/sparkpool",
+				"name": "sparkpool",
+				"type": "Spark",
+				"endpoint": "https://footballworldcupworkspace.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/sparkpool",
+				"auth": {
+					"type": "AAD",
+					"authResource": "https://dev.azuresynapse.net"
+				},
+				"sparkVersion": "3.3",
+				"nodeCount": 10,
+				"cores": 4,
+				"memory": 28,
+				"automaticScaleJobs": false
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			{
+				"cell_type": "code",
+				"source": [
+					"from pyspark.sql import SparkSession\r\n",
+					"from pyspark.sql.types import StructType, StructField, StringType, IntegerType, DateType\r\n",
+					"from pyspark.sql.functions import to_date\r\n",
+					"from pyspark.sql.functions import *\r\n",
+					"\r\n",
+					"\r\n",
+					"# Create a SparkSession\r\n",
+					"spark = SparkSession.builder \\\r\n",
+					"    .appName(\"PySpark_Interview\") \\\r\n",
+					"    .getOrCreate()\r\n",
+					"\r\n",
+					"# Define the schema for the DataFrame\r\n",
+					"schema = StructType([\r\n",
+					"    StructField(\"EmployeeID\", IntegerType(), True),\r\n",
+					"    StructField(\"Name\", StringType(), True),\r\n",
+					"    StructField(\"Department\", StringType(), True),\r\n",
+					"    StructField(\"Salary\", IntegerType(), True),\r\n",
+					"    StructField(\"JoiningDate\", StringType(), True)  # Keep JoiningDate as StringType for now\r\n",
+					"])\r\n",
+					"\r\n",
+					"# Sample data\r\n",
+					"data = [\r\n",
+					"    (1, \"John\", \"Sales\", 50000, \"2022-01-10\"),\r\n",
+					"    (2, \"Alice\", \"HR\", 60000, \"2021-12-15\"),\r\n",
+					"    (3, \"Bob\", \"Engineering\", 70000, \"2022-02-20\"),\r\n",
+					"    (4, \"Emily\", \"Sales\", 55000, \"2022-03-05\"),\r\n",
+					"    (5, \"David\", \"HR\", 62000, \"2022-01-20\")\r\n",
+					"]\r\n",
+					"\r\n",
+					"# Create DataFrame\r\n",
+					"df = spark.createDataFrame(data, schema=schema)\r\n",
+					"\r\n",
+					"# Convert JoiningDate column to DateType\r\n",
+					"df = df.withColumn(\"JoiningDate\", to_date(df[\"JoiningDate\"], \"yyyy-MM-dd\"))\r\n",
+					"\r\n",
+					"# Show DataFrame\r\n",
+					"df.show()\r\n",
+					""
+				],
+				"execution_count": 17
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"#salary>55000\r\n",
+					"df1=df.filter(df.Salary>55000)\r\n",
+					"#department salary\r\n",
+					"df2=df.groupBy(df.Department).sum(df.Salary)\r\n",
+					"#desc salary\r\n",
+					"df3=df.orderBy(df.Salary.desc()).show()\r\n",
+					"#rename \r\n",
+					"df4=df.withColumnRenamed(\"Salary\",\"TOTAL_SALARY\").show()\r\n",
+					"#upper name\r\n",
+					"df5=df.withColumn(\"Name\",upper(\"Name\")).show()\r\n",
+					"#10%bonus >60000\r\n",
+					"df6=df.withColumn(\"bonus\",when(df[\"Salary\"]>60000,df[\"Salary\"]*0.1).otherwise(0)).show()\r\n",
+					"#count length of name\r\n",
+					"df7=df.withColumn(\"NameLength\",length(df[\"Name\"])).show()\r\n",
+					"#only year from date\r\n",
+					"df8=df.withColumn(\"JoiningYear\",year(df[\"JoiningDate\"])).show()\r\n",
+					"#twice the salary\r\n",
+					"df9=df.withColumn(\"SalaryDouble\",df[\"Salary\"]*2).show()\r\n",
+					""
+				],
+				"execution_count": 58
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"from pyspark.sql import SparkSession\r\n",
+					"from pyspark.sql.types import StructType, StructField, IntegerType, StringType, ArrayType\r\n",
+					"\r\n",
+					"# Create a SparkSession\r\n",
+					"spark = SparkSession.builder \\\r\n",
+					"    .appName(\"Creating DataFrame\") \\\r\n",
+					"    .getOrCreate()\r\n",
+					"\r\n",
+					"data = [\r\n",
+					"    (1, \"John Doe\", 25, \"M\", \"john@example.com\", \"123-456-7890\", \"123 Main St, City\", [\"Product1\", \"Product2\"]),\r\n",
+					"    (2, \"Jane Smith\", 30, \"F\", None, \"456-789-0123\", \"456 Elm St, City\", [\"Product2\", \"Product3\"]),\r\n",
+					"    (3, \"Mike Brown\", 45, \"M\", \"mike@example.com\", \"789-012-3456\", \"789 Oak St, City\", [\"Product1\", \"Product4\"]),\r\n",
+					"    (4, \"Emily Lee\", None, \"F\", \"emily@example.com\", \"987-654-3210\", \"987 Pine St, City\", [\"Product3\", \"Product5\"]),\r\n",
+					"    (5, \"John Doe\", 25, \"M\", \"john@example.com\", \"123-456-7890\", \"123 Main St, City\", [\"Product1\", \"Product2\"]),\r\n",
+					"    (6, \"Jane Smith\", 30, \"F\", None, \"456-789-0123\", \"456 Elm St, City\", [\"Product2\", \"Product3\"]),\r\n",
+					"    (7, \"Mike Brown\", 45, \"M\", \"mike@example.com\", \"789-012-3456\", \"789 Oak St, City\", [\"Product1\", \"Product4\"]),\r\n",
+					"    (8, \"Emily Lee\", None, \"F\", \"emily@example.com\", \"987-654-3210\", \"987 Pine St, City\", [\"Product3\", \"Product5\"]),\r\n",
+					"    (9, None, 20, \"F\", \"jane@example.com\", \"456-789-0123\", \"456 Elm St, City\", None)\r\n",
+					"]\r\n",
+					"\r\n",
+					"# Define the schema for the DataFrame\r\n",
+					"schema = StructType([\r\n",
+					"    StructField(\"CustomerID\", IntegerType(), True),\r\n",
+					"    StructField(\"Name\", StringType(), True),\r\n",
+					"    StructField(\"Age\", IntegerType(), True),\r\n",
+					"    StructField(\"Gender\", StringType(), True),\r\n",
+					"    StructField(\"Email\", StringType(), True),\r\n",
+					"    StructField(\"Phone\", StringType(), True),\r\n",
+					"    StructField(\"Address\", StringType(), True),\r\n",
+					"    StructField(\"PurchaseHistory\", ArrayType(StringType()), True)\r\n",
+					"])\r\n",
+					"\r\n",
+					"# Create DataFrame\r\n",
+					"df = spark.createDataFrame(data, schema=schema)\r\n",
+					"\r\n",
+					"# Show DataFrame\r\n",
+					"df.show()\r\n",
+					""
+				],
+				"execution_count": 51
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"**Cleanup**"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"#missing vlaues\r\n",
+					"df1=df.filter(df[\"Email\"].isNull()).show()\r\n",
+					"\r\n",
+					"# Validate the format of email addresses\r\n",
+					"df2 = df.filter(~df[\"Email\"].rlike(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$')).show()\r\n",
+					"\r\n",
+					"# Validate the format of phone numbers (assuming xxx-xxx-xxxx format)\r\n",
+					"df3 = df.filter(~df[\"Phone\"].rlike(r'^\\d{3}-\\d{3}-\\d{4}$')).show()\r\n",
+					"\r\n",
+					"# Check if the Age column contains reasonable values\r\n",
+					"df4 = df.filter((df[\"Age\"].isNull()) | (df[\"Age\"] < 0) | (df[\"Age\"] > 120)).show()\r\n",
+					"\r\n",
+					"#Remove Duplicates\r\n",
+					"df5=df.dropDuplicates([\"Email\"]).show()\r\n",
+					"\r\n",
+					""
+				],
+				"execution_count": 60
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"# Convert email addresses to lowercase\r\n",
+					"df7 = df.withColumn(\"Email\", lower(df[\"Email\"])).show()\r\n",
+					"\r\n",
+					"# Extract the domain from email addresses\r\n",
+					"df8 = df.withColumn(\"Domain\", regexp_extract(df[\"Email\"], r'@([a-zA-Z0-9.-]+)', 1)).show()\r\n",
+					"\r\n",
+					"# Split the PurchaseHistory array into separate rows\r\n",
+					"df9 = df.withColumn(\"Product\", explode(df[\"PurchaseHistory\"])).show()\r\n",
+					"\r\n",
+					"# Calculate the average age of customers\r\n",
+					"average_age = df.select(avg(\"Age\")).first()[0]\r\n",
+					"\r\n",
+					"# Count the number of male and female customers\r\n",
+					"gender_count = df.groupBy(\"Gender\").count().show()\r\n",
+					"\r\n",
+					"# Find the most common product purchased across all customers\r\n",
+					"most_common_product = df.withColumn(\"Product\", explode(df[\"PurchaseHistory\"])).groupBy(\"Product\").count().orderBy(desc(\"count\")).first()\r\n",
+					"\r\n",
+					""
+				],
+				"execution_count": 61
+			}
+		]
+	}
+}
