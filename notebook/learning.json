@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "b9eff8af-4713-4f6c-9e25-3669491699c4"
+				"spark.autotune.trackingId": "89d00eea-7c15-4c9c-a1c7-51e7d0cda164"
 			}
 		},
 		"metadata": {
@@ -139,7 +139,8 @@
 						"transient": {
 							"deleting": false
 						}
-					}
+					},
+					"collapsed": false
 				},
 				"source": [
 					"from pyspark.sql import SparkSession\r\n",
@@ -178,10 +179,9 @@
 					"df = spark.createDataFrame(data, schema=schema)\r\n",
 					"\r\n",
 					"# Show DataFrame\r\n",
-					"df.show()\r\n",
-					""
+					"df.show()"
 				],
-				"execution_count": 51
+				"execution_count": 65
 			},
 			{
 				"cell_type": "markdown",
@@ -207,7 +207,8 @@
 						"transient": {
 							"deleting": false
 						}
-					}
+					},
+					"collapsed": false
 				},
 				"source": [
 					"#missing vlaues\r\n",
@@ -243,27 +244,47 @@
 					}
 				},
 				"source": [
-					"# Convert email addresses to lowercase\r\n",
-					"df7 = df.withColumn(\"Email\", lower(df[\"Email\"])).show()\r\n",
-					"\r\n",
-					"# Extract the domain from email addresses\r\n",
-					"df8 = df.withColumn(\"Domain\", regexp_extract(df[\"Email\"], r'@([a-zA-Z0-9.-]+)', 1)).show()\r\n",
-					"\r\n",
-					"# Split the PurchaseHistory array into separate rows\r\n",
-					"df9 = df.withColumn(\"Product\", explode(df[\"PurchaseHistory\"])).show()\r\n",
-					"\r\n",
-					"# Calculate the average age of customers\r\n",
-					"average_age = df.select(avg(\"Age\")).first()[0]\r\n",
-					"\r\n",
-					"# Count the number of male and female customers\r\n",
-					"gender_count = df.groupBy(\"Gender\").count().show()\r\n",
-					"\r\n",
-					"# Find the most common product purchased across all customers\r\n",
-					"most_common_product = df.withColumn(\"Product\", explode(df[\"PurchaseHistory\"])).groupBy(\"Product\").count().orderBy(desc(\"count\")).first()\r\n",
-					"\r\n",
+					"# Convert email addresses to lowercase\n",
+					"df7 = df.withColumn(\"Email\", lower(df[\"Email\"])).show()\n",
+					"# Extract the domain from email addresses\n",
+					"df8 = df.withColumn(\"Domain\", regexp_extract(df[\"Email\"], r'@([a-zA-Z0-9.-]+)', 1)).show()\n",
+					"\n",
+					"# Split the PurchaseHistory array into separate rows\n",
+					"df9 = df.withColumn(\"Product\", explode(df[\"PurchaseHistory\"])).show()\n",
+					"\n",
+					"# Calculate the average age of customers\n",
+					"average_age = df.select(avg(\"Age\")).first()[0]\n",
+					"print(average_age)\n",
+					"\n",
+					"# Count the number of male and female customers\n",
+					"gender_count = df.groupBy(\"Gender\").count().show()\n",
+					"\n",
+					"# Find the most common product purchased across all customers\n",
+					"most_common_product = df.withColumn(\"Product\", explode(df[\"PurchaseHistory\"])).groupBy(\"Product\").count().orderBy(desc(\"count\")).first()\n",
+					"print(most_common_product)\n",
 					""
 				],
-				"execution_count": 61
+				"execution_count": 72
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"# Calculate the average age of customers\r\n",
+					"average_age = df.select(avg(\"Age\")).first()[0]\r\n",
+					"print(average_age)"
+				],
+				"execution_count": 71
 			}
 		]
 	}
