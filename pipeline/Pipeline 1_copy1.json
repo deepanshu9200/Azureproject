@@ -54,7 +54,13 @@
 						"referenceName": "Exception raise",
 						"type": "NotebookReference"
 					},
-					"snapshot": true
+					"snapshot": true,
+					"sparkPool": {
+						"referenceName": "sparkpool",
+						"type": "BigDataPoolReference"
+					},
+					"executorSize": "Small",
+					"driverSize": "Small"
 				}
 			}
 		],
