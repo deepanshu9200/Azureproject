@@ -1,0 +1,195 @@
+{
+	"name": "window and joins",
+	"properties": {
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"bigDataPool": {
+			"referenceName": "sparkpool",
+			"type": "BigDataPoolReference"
+		},
+		"sessionProperties": {
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 2,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "false",
+				"spark.dynamicAllocation.minExecutors": "2",
+				"spark.dynamicAllocation.maxExecutors": "2",
+				"spark.autotune.trackingId": "df1a599e-09ba-4b8e-870d-14b623095290"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"enableDebugMode": false,
+			"kernelspec": {
+				"name": "synapse_pyspark",
+				"display_name": "Synapse PySpark"
+			},
+			"language_info": {
+				"name": "python"
+			},
+			"a365ComputeOptions": {
+				"id": "/subscriptions/41e7dbb8-edc9-43da-b117-e8bffb8e870b/resourceGroups/Footballworldcup/providers/Microsoft.Synapse/workspaces/footballworldcupworkspace/bigDataPools/sparkpool",
+				"name": "sparkpool",
+				"type": "Spark",
+				"endpoint": "https://footballworldcupworkspace.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/sparkpool",
+				"auth": {
+					"type": "AAD",
+					"authResource": "https://dev.azuresynapse.net"
+				},
+				"sparkVersion": "3.3",
+				"nodeCount": 10,
+				"cores": 4,
+				"memory": 28,
+				"automaticScaleJobs": false
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			{
+				"cell_type": "code",
+				"source": [
+					"from pyspark.sql import SparkSession\r\n",
+					"from pyspark.sql.functions import monotonically_increasing_id\r\n",
+					"\r\n",
+					"# Create SparkSession\r\n",
+					"spark = SparkSession.builder \\\r\n",
+					"    .appName(\"PySpark Joins and Window Functions Demo\") \\\r\n",
+					"    .getOrCreate()\r\n",
+					"\r\n",
+					"# Sample data for DataFrame 1\r\n",
+					"data1 = [\r\n",
+					"    (1, \"Alice\", \"New York\"),\r\n",
+					"    (2, \"Bob\", \"Los Angeles\"),\r\n",
+					"    (3, \"Charlie\", \"Chicago\"),\r\n",
+					"    (4, \"David\", \"Houston\"),\r\n",
+					"    (5, \"Eve\", \"Philadelphia\"),\r\n",
+					"    (6, \"Frank\", \"Phoenix\"),\r\n",
+					"    (7, \"Grace\", \"San Antonio\"),\r\n",
+					"    (8, \"Henry\", \"San Diego\"),\r\n",
+					"    (9, \"Ivy\", \"Dallas\"),\r\n",
+					"    (10, \"Jack\", \"San Jose\")\r\n",
+					"]\r\n",
+					"\r\n",
+					"# Sample data for DataFrame 2\r\n",
+					"data2 = [\r\n",
+					"    (1, 25, \"Manager\"),\r\n",
+					"    (3, 30, \"Analyst\"),\r\n",
+					"    (5, 35, \"Engineer\"),\r\n",
+					"    (7, 40, \"Director\"),\r\n",
+					"    (9, 45, \"Consultant\"),\r\n",
+					"    (11, 50, \"Developer\"),\r\n",
+					"    (13, 55, \"Architect\"),\r\n",
+					"    (15, 60, \"Designer\"),\r\n",
+					"    (17, 65, \"Coordinator\"),\r\n",
+					"    (19, 70, \"Administrator\")\r\n",
+					"]\r\n",
+					"\r\n",
+					"# Create DataFrames from sample data\r\n",
+					"df1 = spark.createDataFrame(data1, [\"id\", \"name\", \"city\"])\r\n",
+					"df2 = spark.createDataFrame(data2, [\"id\", \"age\", \"job\"])\r\n",
+					""
+				],
+				"execution_count": 2
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"# Inner Join: Returns only the rows with matching keys in both DataFrames.\r\n",
+					"innerjoin=df1.join(df2,'id','inner')\r\n",
+					"innerjoin.show()\r\n",
+					"# Left Join: Returns all rows from the left DataFrame and matching rows from the right DataFrame.\r\n",
+					"left_outer=df1.join(df2,'id','leftouter')\r\n",
+					"left_outer.show()\r\n",
+					"# Right Join: Returns all rows from the right DataFrame and matching rows from the left DataFrame.\r\n",
+					"right_outer=df1.join(df2,'id','rightouter')\r\n",
+					"right_outer.show()\r\n",
+					"# Full Outer Join: Returns all rows from both DataFrames, including matching and non-matching rows.\r\n",
+					"\r\n",
+					"fullouter=df1.join(df2,'id','fullouter')\r\n",
+					"fullouter.show()\r\n",
+					"# Left Semi Join: Returns all rows from the left DataFrame where there is a match in the right DataFrame.\r\n",
+					"leftsemi=df1.join(df2,'id','semi')\r\n",
+					"leftsemi.show()\r\n",
+					"# Left Anti Join: Returns all rows from the left DataFrame where there is no match in the right DataFrame.\r\n",
+					"\r\n",
+					"antijoin=df1.join(df2,'id','anti')\r\n",
+					"antijoin.show()"
+				],
+				"execution_count": 13
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"from pyspark.sql.window import Window\r\n",
+					"from pyspark.sql.functions import row_number, rank, dense_rank, cume_dist\r\n",
+					"\r\n",
+					"# Window specification\r\n",
+					"window_spec = Window.orderBy(\"id\")\r\n",
+					"\r\n",
+					"# Row number\r\n",
+					"row_number_df = df1.withColumn(\"row_number\", row_number().over(window_spec))\r\n",
+					"row_number_df.show()\r\n",
+					"# Rank\r\n",
+					"rank_df = df1.withColumn(\"rank\", rank().over(window_spec))\r\n",
+					"rank_df.show()\r\n",
+					"# Dense rank\r\n",
+					"dense_rank_df = df1.withColumn(\"dense_rank\", dense_rank().over(window_spec))\r\n",
+					"dense_rank_df.show()\r\n",
+					"# Cumulative distribution\r\n",
+					"cume_dist_df = df1.withColumn(\"cume_dist\", cume_dist().over(window_spec))\r\n",
+					"cume_dist_df.show()"
+				],
+				"execution_count": 23
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"from pyspark.sql.window import Window\r\n",
+					"from pyspark.sql.functions import row_number, rank, dense_rank, cume_dist\r\n",
+					"\r\n",
+					"window_spect=Window.orderBy('id')\r\n",
+					"\r\n",
+					"rankdf=df2.withColumn('rank',rank().over(window_spect))\r\n",
+					"rankdf.show()"
+				],
+				"execution_count": 21
+			}
+		]
+	}
+}
