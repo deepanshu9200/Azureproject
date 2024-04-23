@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "9f680e3a-3046-48b6-9d4c-f5b9eef9c0a8"
+				"spark.autotune.trackingId": "684a3be9-470d-4d3f-8638-fd3a12dde730"
 			}
 		},
 		"metadata": {
@@ -55,7 +55,7 @@
 					"if (a==2):\r\n",
 					"    print(\"match\")\r\n",
 					"else:\r\n",
-					"    raise Exception(\"not matching\")"
+					"    print(\"not matching\")"
 				],
 				"execution_count": 6
 			}
