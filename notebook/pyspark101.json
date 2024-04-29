@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "c74cd3b8-4f19-482d-8645-57f7de06ba2e"
+				"spark.autotune.trackingId": "2e1f92dc-e02e-47d1-a482-2d0eecb80584"
 			}
 		},
 		"metadata": {
@@ -54,7 +54,136 @@
 			{
 				"cell_type": "code",
 				"source": [
+					"from pyspark.sql import SparkSession\r\n",
+					"\r\n",
+					"\r\n",
+					"spark= SparkSession.builder.appName(\"pyspark101\").getOrCreate()\r\n",
 					""
+				],
+				"execution_count": 69
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"1 version"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"print(spark.version)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"2.index of a PySpark DataFrame into a column"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"from pyspark.sql.functions import rank,row_number\r\n",
+					"from pyspark.sql.window import Window\r\n",
+					"\r\n",
+					"data = [[1,'deep','25'],\r\n",
+					"[2,'fugh','56'],\r\n",
+					"[3,'jenf','32']]\r\n",
+					"\r\n",
+					"schema = ['id','name','age']\r\n",
+					"\r\n",
+					"df=spark.createDataFrame(data,schema=schema)\r\n",
+					"df.show()\r\n",
+					"\r\n",
+					"win=Window.orderBy(\"age\")\r\n",
+					"\r\n",
+					"ans_df= df.withColumn(\"Row_number\",row_number().over(win)) \\\r\n",
+					".withColumn(\"Rank\",rank().over(win))\r\n",
+					"ans_df.show()"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"3.combine many lists to form a PySpark DataFrame"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"data1 = [[1,'deep','25'],\r\n",
+					"[2,'fugh','56'],\r\n",
+					"[3,'jenf','32']]\r\n",
+					"\r\n",
+					"schema1 = ['id','name','age']\r\n",
+					"\r\n",
+					"data2 = [[4,'gfjd','74'],\r\n",
+					"[5,'ndmnf','34'],\r\n",
+					"[6,'nfd','74']]\r\n",
+					"\r\n",
+					"schema2 = ['id','name','age']\r\n",
+					"\r\n",
+					"df1=spark.createDataFrame(data=data1,schema=schema1)\r\n",
+					"\r\n",
+					"df2=spark.createDataFrame(data=data2,schema=schema2)\r\n",
+					"df3=df1.union(df2)\r\n",
+					"df3.show()"
 				],
 				"execution_count": null
 			}
