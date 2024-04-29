@@ -1,6 +1,9 @@
 {
 	"name": "bronze_load_2",
 	"properties": {
+		"folder": {
+			"name": "Project"
+		},
 		"nbformat": 4,
 		"nbformat_minor": 2,
 		"bigDataPool": {

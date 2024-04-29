@@ -1,8 +1,8 @@
 {
-	"name": "parameterNotebook",
+	"name": "pyspark101",
 	"properties": {
 		"folder": {
-			"name": "Project"
+			"name": "Learning"
 		},
 		"nbformat": 4,
 		"nbformat_minor": 2,
@@ -16,20 +16,20 @@
 			"executorMemory": "28g",
 			"executorCores": 4,
 			"numExecutors": 2,
-			"runAsWorkspaceSystemIdentity": false,
 			"conf": {
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "8e4b2b2a-08dd-4961-a97f-a2e9c3888dde"
+				"spark.autotune.trackingId": "c74cd3b8-4f19-482d-8645-57f7de06ba2e"
 			}
 		},
 		"metadata": {
 			"saveOutput": true,
-			"synapse_widget": {
-				"version": "0.1"
-			},
 			"enableDebugMode": false,
+			"kernelspec": {
+				"name": "synapse_pyspark",
+				"display_name": "Synapse PySpark"
+			},
 			"language_info": {
 				"name": "python"
 			},
@@ -40,14 +40,13 @@
 				"endpoint": "https://footballworldcupworkspace.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/sparkpool",
 				"auth": {
 					"type": "AAD",
-					"authResource": "https://dev.azuresynapse.net",
-					"authHeader": null
+					"authResource": "https://dev.azuresynapse.net"
 				},
 				"sparkVersion": "3.3",
 				"nodeCount": 10,
 				"cores": 4,
 				"memory": 28,
-				"extraHeader": null
+				"automaticScaleJobs": false
 			},
 			"sessionKeepAliveTimeout": 30
 		},
@@ -55,24 +54,9 @@
 			{
 				"cell_type": "code",
 				"source": [
-					"from notebookutils import mssparkutils\r\n",
-					"\r\n",
-					"rawstorage=f\"abfss://raw@footballwcstorage.dfs.core.windows.net\"\r\n",
-					"parquetfilestorage=f\"abfss://converttoparquet@footballwcstorage.dfs.core.windows.net\"\r\n",
-					"goldstorage=f\"abfss://gold@footballwcstorage.dfs.core.windows.net\"\r\n",
-					"silverstorage=f\"abfss://silver@footballwcstorage.dfs.core.windows.net\"\r\n",
-					"bronzestorage=f\"abfss://bronze@footballwcstorage.dfs.core.windows.net\"\r\n",
-					"deltafilestorage=f\"abfss://converttodelta@footballwcstorage.dfs.core.windows.net\"\r\n",
-					"bronzedeltatablepath=f\"{bronzestorage}/Tables\"\r\n",
-					"silverdeltatablepath=f\"{silverstorage}/Tables\"\r\n",
-					"rawfilename='car_sales_data.csv'\r\n",
-					"folder=rawfilename.split(\".\")\r\n",
-					"folder=folder[0]\r\n",
-					"print(folder)\r\n",
-					"odsdatabasename='dbo'\r\n",
 					""
 				],
-				"execution_count": 9
+				"execution_count": null
 			}
 		]
 	}
