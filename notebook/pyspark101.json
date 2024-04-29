@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "2e1f92dc-e02e-47d1-a482-2d0eecb80584"
+				"spark.autotune.trackingId": "225839be-b852-4fa7-99d6-93225aa7f643"
 			}
 		},
 		"metadata": {
@@ -60,7 +60,7 @@
 					"spark= SparkSession.builder.appName(\"pyspark101\").getOrCreate()\r\n",
 					""
 				],
-				"execution_count": 69
+				"execution_count": 1
 			},
 			{
 				"cell_type": "markdown",
@@ -91,7 +91,7 @@
 				"source": [
 					"print(spark.version)"
 				],
-				"execution_count": null
+				"execution_count": 2
 			},
 			{
 				"cell_type": "markdown",
@@ -138,7 +138,7 @@
 					".withColumn(\"Rank\",rank().over(win))\r\n",
 					"ans_df.show()"
 				],
-				"execution_count": null
+				"execution_count": 3
 			},
 			{
 				"cell_type": "markdown",
@@ -183,9 +183,252 @@
 					"\r\n",
 					"df2=spark.createDataFrame(data=data2,schema=schema2)\r\n",
 					"df3=df1.union(df2)\r\n",
-					"df3.show()"
+					"df3.show()\r\n",
+					"\r\n",
+					"# Define your lists\r\n",
+					"list1 = [\"a\", \"b\", \"c\", \"d\"]\r\n",
+					"list2 = [1, 2, 3, 4]\r\n",
+					"\r\n",
+					"from pyspark import SparkContext\r\n",
+					"\r\n",
+					"sc=spark.sparkContext\r\n",
+					"\r\n",
+					"rdd= sc.parallelize(list(zip(list1,list2)))\r\n",
+					"rdd1=rdd.collect()\r\n",
+					"df = rdd.toDF([\"Column1\", \"Column2\"])\r\n",
+					"\r\n",
+					"print(rdd1)\r\n",
+					"df.show()"
 				],
-				"execution_count": null
+				"execution_count": 22
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"4  get the items of list A not present in list B"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"list_A = [1, 2, 3, 4, 5]\r\n",
+					"list_B = [4, 5, 6, 7, 8]\r\n",
+					"\r\n",
+					"rdd_A=sc.parallelize(list(list_A))\r\n",
+					"rdd_B=sc.parallelize(list(list_B))\r\n",
+					"rdd3=rdd_A.subtract(rdd_B)\r\n",
+					"\r\n",
+					"rdd4=rdd3.collect()\r\n",
+					"print(rdd4)"
+				],
+				"execution_count": 31
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"5 . get the items not common to both list A and list B"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"list_A = [1, 2, 3, 4, 5]\r\n",
+					"list_B = [4, 5, 6, 7, 8]\r\n",
+					"\r\n",
+					"rdd_A=sc.parallelize(list(list_A))\r\n",
+					"rdd_B=sc.parallelize(list(list_B))\r\n",
+					"rdd3=rdd_A.intersection(rdd_B)\r\n",
+					"rdd5=rdd_A.union(rdd_B)\r\n",
+					"rdd6=rdd5.subtract(rdd3)\r\n",
+					"\r\n",
+					"rdd4=rdd3.collect()\r\n",
+					"print(rdd4)\r\n",
+					"\r\n",
+					""
+				],
+				"execution_count": 32
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"6 . minimum, 25th percentile, median, 75th, and max of a numeric column"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"data = [(\"A\", 10), (\"B\", 20), (\"C\", 30), (\"D\", 40), (\"E\", 50), (\"F\", 15), (\"G\", 28), (\"H\", 54), (\"I\", 41), (\"J\", 86)]\r\n",
+					"df = spark.createDataFrame(data, [\"Name\", \"Age\"])\r\n",
+					"from pyspark.sql.functions import rank,row_number,min,max,percent_rank, mean\r\n",
+					"\r\n",
+					"\r\n",
+					"min_df=df.agg(min(df['Age'])).collect()[0][0]\r\n",
+					"Max_df=df.agg(max(df['Age'])).collect()[0][0]\r\n",
+					"\r\n",
+					"mean_df=df.agg(mean(df['Age'])).collect()[0][0]\r\n",
+					"\r\n",
+					"print(min_df)\r\n",
+					"print(Max_df)"
+				],
+				"execution_count": 40
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"8.to get frequency counts of unique items of a column"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"from pyspark.sql import Row\r\n",
+					"\r\n",
+					"# Sample data\r\n",
+					"data = [\r\n",
+					"Row(name='John', job='Engineer'),\r\n",
+					"Row(name='John', job='Engineer'),\r\n",
+					"Row(name='Mary', job='Scientist'),\r\n",
+					"Row(name='Bob', job='Engineer'),\r\n",
+					"Row(name='Bob', job='Engineer'),\r\n",
+					"Row(name='Bob', job='Scientist'),\r\n",
+					"Row(name='Sam', job='Doctor'),\r\n",
+					"]\r\n",
+					"\r\n",
+					"# create DataFrame\r\n",
+					"df = spark.createDataFrame(data)\r\n",
+					"\r\n",
+					"df1=df.groupBy(\"name\").count()\r\n",
+					"# show DataFrame\r\n",
+					"df1.show()\r\n",
+					""
+				],
+				"execution_count": 43
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"9. keep only top 2 most frequent values as it is and replace everything else as ‘Other’"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"from pyspark.sql import Row\r\n",
+					"\r\n",
+					"# Sample data\r\n",
+					"data = [\r\n",
+					"Row(name='John', job='Engineer'),\r\n",
+					"Row(name='John', job='Engineer'),\r\n",
+					"Row(name='Mary', job='Scientist'),\r\n",
+					"Row(name='Bob', job='Engineer'),\r\n",
+					"Row(name='Bob', job='Engineer'),\r\n",
+					"Row(name='Bob', job='Scientist'),\r\n",
+					"Row(name='Sam', job='Doctor'),\r\n",
+					"]\r\n",
+					"\r\n",
+					"# create DataFrame\r\n",
+					"from pyspark.sql.functions import col, when\r\n",
+					"\r\n",
+					"# Get the top 2 most frequent jobs\r\n",
+					"top_2_jobs = df.groupBy('job').count().orderBy('count', ascending=False).limit(2).select('job').rdd.flatMap(lambda x: x).collect()\r\n",
+					"\r\n",
+					"# Replace all but the top 2 most frequent jobs with 'Other'\r\n",
+					"df = df.withColumn('job', when(col('job').isin(top_2_jobs), col('job')).otherwise('Other'))\r\n",
+					"\r\n",
+					"# show DataFrame\r\n",
+					"df.show()"
+				],
+				"execution_count": 47
 			}
 		]
 	}
