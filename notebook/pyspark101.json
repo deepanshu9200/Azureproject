@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "225839be-b852-4fa7-99d6-93225aa7f643"
+				"spark.autotune.trackingId": "d6636bf8-1dc8-4b39-99e6-da430f5d81db"
 			}
 		},
 		"metadata": {
@@ -294,7 +294,7 @@
 					}
 				},
 				"source": [
-					"6 . minimum, 25th percentile, median, 75th, and max of a numeric column"
+					"**6 . minimum, 25th percentile, median, 75th, and max of a numeric column**"
 				]
 			},
 			{
@@ -308,13 +308,13 @@
 						"transient": {
 							"deleting": false
 						}
-					}
+					},
+					"collapsed": false
 				},
 				"source": [
 					"data = [(\"A\", 10), (\"B\", 20), (\"C\", 30), (\"D\", 40), (\"E\", 50), (\"F\", 15), (\"G\", 28), (\"H\", 54), (\"I\", 41), (\"J\", 86)]\r\n",
 					"df = spark.createDataFrame(data, [\"Name\", \"Age\"])\r\n",
 					"from pyspark.sql.functions import rank,row_number,min,max,percent_rank, mean\r\n",
-					"\r\n",
 					"\r\n",
 					"min_df=df.agg(min(df['Age'])).collect()[0][0]\r\n",
 					"Max_df=df.agg(max(df['Age'])).collect()[0][0]\r\n",
@@ -324,7 +324,7 @@
 					"print(min_df)\r\n",
 					"print(Max_df)"
 				],
-				"execution_count": 40
+				"execution_count": 12
 			},
 			{
 				"cell_type": "markdown",
@@ -386,7 +386,7 @@
 					}
 				},
 				"source": [
-					"9. keep only top 2 most frequent values as it is and replace everything else as ‘Other’"
+					"**9. keep only top 2 most frequent values as it is and replace everything else as ‘Other’**"
 				]
 			},
 			{
@@ -417,15 +417,59 @@
 					"]\r\n",
 					"\r\n",
 					"# create DataFrame\r\n",
+					"df = spark.createDataFrame(data)\r\n",
+					"\r\n",
 					"from pyspark.sql.functions import col, when\r\n",
+					"df1=df.groupby('job').count().limit(2).select('job')\r\n",
 					"\r\n",
-					"# Get the top 2 most frequent jobs\r\n",
-					"top_2_jobs = df.groupBy('job').count().orderBy('count', ascending=False).limit(2).select('job').rdd.flatMap(lambda x: x).collect()\r\n",
+					"#convert to list\r\n",
+					"top_2_variable=df1.rdd.flatMap(lambda x: x).collect()\r\n",
+					"print(top_2_variable)\r\n",
 					"\r\n",
-					"# Replace all but the top 2 most frequent jobs with 'Other'\r\n",
-					"df = df.withColumn('job', when(col('job').isin(top_2_jobs), col('job')).otherwise('Other'))\r\n",
+					"#Imp\r\n",
+					"df3=df.withColumn(\"new_column\",when(df['job'].isin(top_2_variable),df['job']).otherwise('other'))\r\n",
+					"df3.show()"
+				],
+				"execution_count": 23
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"9. How to Drop rows with NA values specific to a particular column?"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"# Assuming df is your DataFrame\r\n",
+					"df = spark.createDataFrame([\r\n",
+					"(\"A\", 1, None),\r\n",
+					"(\"B\", None, \"123\" ),\r\n",
+					"(\"B\", 3, \"456\"),\r\n",
+					"(\"D\", None, None),\r\n",
+					"], [\"Name\", \"Value\", \"id\"])\r\n",
 					"\r\n",
-					"# show DataFrame\r\n",
+					"df_2 = df.dropna(subset=['id'])\r\n",
+					"df.fillna(1,'id')\r\n",
+					"df_2.show()\r\n",
 					"df.show()"
 				],
 				"execution_count": 47
