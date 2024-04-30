@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "f0b91a5b-4dcc-4154-95c2-0a50fe8ff6f0"
+				"spark.autotune.trackingId": "20017363-869b-4063-a520-45b096dd1388"
 			}
 		},
 		"metadata": {
@@ -544,14 +544,14 @@
 					}
 				},
 				"source": [
-					"from pyspark.sql.functions import rand\r\n",
+					"from pyspark.sql.functions import rand,lit\r\n",
 					"\r\n",
 					"# Generate a DataFrame with a single column \"id\" with 10 rows\r\n",
 					"df = spark.range(10)\r\n",
 					"\r\n",
 					"# Generate a random float between 0 and 1, scale and shift it to get a random integer between 1 and 10\r\n",
 					"df = df.withColumn(\"random\", ((rand(seed=42) * 10) + 1).cast(\"int\"))\r\n",
-					"df1=df.withColumn(\"Dividedby3\",df[random]/3)\r\n",
+					"df1=df.withColumn(\"Dividedby3\",when (df['random']%3==0,lit(\"divided\"))).othewise(lit(\"notdivided\"))\r\n",
 					"# Show the DataFrame\r\n",
 					"df.show()"
 				],
